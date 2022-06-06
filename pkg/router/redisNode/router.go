@@ -22,7 +22,6 @@ package redisNode
 import (
 	"context"
 	"fmt"
-	"io"
 	"strings"
 	"sync"
 
@@ -96,30 +95,15 @@ func (r *Router) Handle(w *RedSHandle.WriterHandle, args []interface{}) error {
 }
 
 func (r *Router) Sync(args []interface{}) error {
-	cmdType := strings.ToUpper(args[0].(string))
-	op, ok := router.OpTable[cmdType]
-	handlers, ok := r.cmd[cmdType]
-	if !ok {
-		handlers = r.cmd[CMDEXEC]
+	cmd := args[0].(string)
+	var err error
+	if len(args) > 1 {
+		_, err = r.Do(cmd, args[1:]...)
+	} else {
+		_, err = r.Do(cmd)
 	}
-	c := r.pool.Get().(*router.Context)
-	defer func() {
-		c.Reset()
-		r.pool.Put(c)
-	}()
 
-	c.Index = -1
-	c.Writer = RedSHandle.NewWriterHandle(io.Discard)
-	c.Args = args
-	c.Handlers = handlers
-	c.Cmd = cmdType
-	c.Op = op.Flag
-	c.Reply = nil
-	handle := handlers.Last()
-	if handle != nil {
-		return handle(c)
-	}
-	return nil
+	return err
 }
 
 var _ router.IRoutes = (*Router)(nil)

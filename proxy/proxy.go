@@ -73,6 +73,12 @@ func New() (*Proxy, error) {
 			},
 		}
 		p.router = proxynode.NewRouter(p.proxyClient)
+		conn := p.proxyClient.Get()
+		_, err := conn.Do("PING")
+		if err != nil {
+			panic(err)
+		}
+		_ = conn.Close()
 	} else {
 		p.proxyCluster, err = rediscluster.NewCluster(
 			&rediscluster.Options{
@@ -89,6 +95,10 @@ func New() (*Proxy, error) {
 			return nil, err
 		}
 		p.router = proxycluster.NewRouter(p.proxyCluster)
+		_, err := p.proxyCluster.Do("PING", "")
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	// if enable p2p command pubsub mode,then create p2p pubsub handle

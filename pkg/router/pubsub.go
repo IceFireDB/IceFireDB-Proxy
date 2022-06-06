@@ -42,16 +42,17 @@ func PubSubMiddleware(router IRoutes, pubSub *p2p.PubSub) HandlerFunc {
 			}
 			s, _ := json.Marshal(args)
 			pubSub.Outbound <- string(s)
-			// logrus.Info("outbound: ", string(s))
+			logrus.Info("outbound: ", string(s))
 		}
 		return context.Next()
 	}
 }
 
+// 完成redis命令在节点间的广播功能
 func subscribe(router IRoutes, pubSub *p2p.PubSub) {
 	utils.GoWithRecover(func() {
 		for args := range pubSub.Inbound {
-			// logrus.Info("inbound: ", args.Message)
+			logrus.Info("inbound: ", args.Message)
 			var data []interface{}
 			err := json.Unmarshal([]byte(args.Message), &data)
 			if err != nil {

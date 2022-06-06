@@ -28,7 +28,7 @@ redisdb:
   cluster_update_heartbeat: 30 # Heartbeat interval for cluster status update: Takes effect only when READ/write separation is enabled: minimum 5 seconds
 
 pprof_debug:
-  enable: true
+  enable: false
   port: 16060
 
 log:
@@ -75,7 +75,7 @@ monitor:
 
 # prometheus metrics
 prometheus_exporter:
-  address: ":19090"
+  address: ":19091"
   hotkey_exporter:
     record_limit: 32
     include_metrics: [ "hotkey.record", "hotkey.count" ]

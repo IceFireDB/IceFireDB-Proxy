@@ -17,33 +17,37 @@
  *
  */
 
-package proxy
+package redisNode
 
 import (
-	"net"
+	"log"
+	"testing"
+	"time"
 
-	"github.com/sirupsen/logrus"
-
-	"github.com/IceFireDB/IceFireDB-Proxy/pkg/bareneter"
-	"github.com/IceFireDB/IceFireDB-Proxy/pkg/config"
-	"github.com/IceFireDB/IceFireDB-Proxy/utils"
+	redisclient "github.com/gomodule/redigo/redis"
 )
 
-func (p *Proxy) accept(conn bareneter.Conn) bool {
-	if config.Get().IPWhiteList.Enable {
-		host, _, _ := net.SplitHostPort(conn.RemoteAddr())
-		if !utils.InArray(host, config.Get().IPWhiteList.List) {
-			return false
-		}
+func TestSync(t *testing.T) {
+	cli := &redisclient.Pool{
+		MaxIdle:     2,
+		IdleTimeout: 120 * time.Second,
+		Dial: func() (redisclient.Conn, error) {
+			c, err := redisclient.Dial("tcp", "127.0.0.1:6379",
+				redisclient.DialConnectTimeout(time.Duration(5)*time.Second),
+				redisclient.DialReadTimeout(time.Duration(1)*time.Second),
+				redisclient.DialWriteTimeout(time.Duration(1)*time.Second))
+			if err != nil {
+				return nil, err
+			}
+			return c, err
+		},
+		TestOnBorrow: func(c redisclient.Conn, t time.Time) error {
+			_, err := c.Do("PING")
+			return err
+		},
 	}
+	r := NewRouter(cli)
 
-	logrus.Infof("client connect %s", conn.RemoteAddr())
-
-	p.Monitor.ConnectionGauge.Inc()
-	return true
-}
-
-func (p *Proxy) closed(conn bareneter.Conn, err error) {
-	logrus.Infof("client closed %s", conn.RemoteAddr())
-	p.Monitor.ConnectionGauge.Dec()
+	err := r.Sync([]interface{}{"set", "aa"})
+	log.Println(err)
 }
