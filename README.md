@@ -10,7 +10,8 @@ IceFireDB-Proxy is a high-performance, high-availability, and user-friendly Resp
 4. Excellent traffic control policies: Traffic read/write separation and multi-tenant data isolation
 5. Excellent command telemetry features
 6. Bottom-fishing use of mind and base abilities that are closer to cloud native
-7. New framework for faster network, will be upgraded soon. [redhub](https://github.com/IceFireDB/redhub)
+7. Supports P2P automatic networking, and Proxy helps traditional Redis databases achieve data decentralization.
+8. New framework for faster network, will be upgraded soon. [redhub](https://github.com/IceFireDB/redhub)
 
 # Component Architecture
 ![comp-archotecture](./docs/comp-archotecture.png)
