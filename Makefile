@@ -12,7 +12,7 @@ BUILD_DATE=$(shell date '+%Y-%m-%d %H:%M:%S')
 # compile
 CFLAGS = -ldflags "-s -w -X \"main.BuildVersion=${COMMIT_HASH}\" -X \"main.BuildDate=$(BUILD_DATE)\""
 
-GOPROXY=https://goproxy.cn,direct
+# GOPROXY=https://goproxy.cn,direct
 
 all:
 	if [ ! -d "./bin/" ]; then \
