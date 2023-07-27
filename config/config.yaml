@@ -1,0 +1,49 @@
+# proxy
+proxy:
+  local_port: 16379
+  enable_mtls: false
+
+# p2p config
+p2p:
+  enable: true
+  service_discovery_id: "p2p_redis_proxy_service_test"
+  service_command_topic: "p2p_redis_proxy_service_topic_test"
+  service_discover_mode: "advertise" # advertise or announce
+
+# remote redis config
+redisdb:
+#  type: cluster # cluster、node
+  type: node # cluster、node
+#  start_nodes: "192.168.2.250:8001,192.168.2.250:8002,192.168.2.250:8003"
+#  start_nodes: "192.168.2.250:6379"
+  start_nodes: "127.0.0.1:6379"
+  conn_timeout: 5 # Unit: second
+  conn_read_timeout: 1
+  conn_write_timeout: 1
+  conn_alive_timeout: 60
+  conn_pool_size: 80 # Connection pool 0 indicates the short connection
+
+pprof_debug:
+  enable: false
+  port: 16060
+
+log:
+  level: debug
+
+# IP address whitelist restriction
+ip_white_list:
+  enable: true
+  list:
+    - "127.0.0.1"
+    - "localhost"
+
+# Caching, proxy caching
+cache:
+  enable: true
+  max_items_size: 2048 #Maximum number of items stored in the Cache
+  default_expiration: 5000 # Cache KV default expiration time (milliseconds)
+  cleanup_interval: 120 #Cache memory clearing interval (unit: second)
+
+ignore_cmd:
+  enable: false
+  cmd_list: []
